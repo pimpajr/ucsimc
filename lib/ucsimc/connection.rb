@@ -1,20 +1,26 @@
+require 'ucsimc/aaa'
+require 'rest-client'
+
 module Ucsimc
-  class Connection
+  class Connection < Aaa
     attr_accessor :user, :host, :aaa
     attr_reader :connection, :cookie
         
-    def initialize user, pass, host
-      @user = user
-      @pass = pass
-      @host = host
-      @action = "login"
-      create_aaa
+    def initialize opts
+      @user = opts[:user]
+      @pass = opts[:pass]
+      @host = opts[:host]
+      #@action = "login"
+      #@aaa_req = login
+      login
       build_connect
       get_cookie
     end
+    
+    
         
     def get_cookie
-      resp = @connection['xmlIM'].post @aaa.to_xml
+      resp = @connection['xmlIM'].post @req
       resp_doc = Nokogiri::XML resp
       if resp_doc.root.attribute "outCookie"
         @cookie = resp_doc.root.attribute("outCookie").value

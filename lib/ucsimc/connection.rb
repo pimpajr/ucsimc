@@ -12,7 +12,6 @@ module Ucsimc
     end
         
     def get_cookie
-      #con = build_connect
       resp = @connection['xmlIM'].post @aaa.to_xml
       resp_doc = Nokogiri::XML resp
       if resp_doc.root.attribute "outCookie"
@@ -22,7 +21,6 @@ module Ucsimc
                                                                           resp_doc.root.attribute("errorCode").value,
                                                                           resp_doc.root.attribute("errorDescr").value]
       end
-      #cookie
     end
     
     def build_connect
@@ -34,7 +32,6 @@ module Ucsimc
       require 'nokogiri'
       doc = Nokogiri::XML::Document.new
       @aaa = doc.create_element "aaaLogin", :inName => @user, :inPassword => @pass 
-      #@aaa
     end
     
     def create_refresh
@@ -46,7 +43,6 @@ module Ucsimc
     
     def refresh
       aaarefresh = create_refresh
-#      con = build_connect
       resp = @connection['xmlIM'].post aaarefresh.to_xml
       resp_doc = Nokogiri::XML(resp)
       if resp_doc.root.attribute "outCookie"
@@ -58,7 +54,7 @@ module Ucsimc
       end
     end
     
-
+    
     
   end
 end

@@ -1,12 +1,14 @@
 module Ucsimc
   class Connection
-    attr_accessor :user, :host, :aaa, :cookie
+    attr_accessor :user, :host, :aaa
+    attr_reader :connection, :cookie
         
     def initialize user, pass, host
       @user = user
       @pass = pass
       @host = host
-      create_aaalogin
+      @action = "login"
+      create_aaa
       build_connect
       get_cookie
     end
@@ -28,10 +30,21 @@ module Ucsimc
       @connection = RestClient::Resource.new "https://#{@host}", :verify_ssl => false
     end
         
-    def create_aaalogin
+    def create_aaa
       require 'nokogiri'
       doc = Nokogiri::XML::Document.new
-      @aaa = doc.create_element "aaaLogin", :inName => @user, :inPassword => @pass 
+      case @action
+      when /login/
+        puts "login"
+        @aaa = doc.create_element "aaaLogin", :inName => @user, :inPassword => @pass
+      when /refresh/
+        puts "refresh"
+        @aaa = doc.create_element "aaaRefresh", :inName => @user, :inPassword => @pass, :inCookie => @cookie
+      when /logout/
+        puts "logout"
+        @aaa = doc.create_element "aaaLogout", :inCookie => @cookie
+      end
+       
     end
     
     def create_refresh
@@ -42,8 +55,9 @@ module Ucsimc
     end
     
     def refresh
-      aaarefresh = create_refresh
-      resp = @connection['xmlIM'].post aaarefresh.to_xml
+      @action = "refresh"
+      create_aaa
+      resp = @connection['xmlIM'].post @aaa.to_xml
       resp_doc = Nokogiri::XML(resp)
       if resp_doc.root.attribute "outCookie"
         @cookie = resp_doc.root.attribute("outCookie").value

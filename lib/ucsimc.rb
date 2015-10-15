@@ -1,5 +1,6 @@
 require "ucsimc/version"
+require "ucsimc/connection"
 
 module Ucsimc
-  # Your code goes here...
+  
 end

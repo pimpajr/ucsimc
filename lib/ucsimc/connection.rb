@@ -4,9 +4,9 @@ module Ucsimc
         
     def initialize user, pass, host
       @user = user
-      @pass = pass
+      pass = pass
       @host = host
-      @aaa = create_aaalogin @user, @pass
+      @aaa = create_aaalogin @user, pass
       @cookie = get_cookie @aaa
     end
         

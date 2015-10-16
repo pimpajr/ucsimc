@@ -10,9 +10,7 @@ module Ucsimc
       @user = opts[:user]
       @pass = opts[:pass]
       @host = opts[:host]
-      #@action = "login"
-      #@aaa_req = login
-      #aaalogin
+        
       build_connect
       login
     end
@@ -36,8 +34,7 @@ module Ucsimc
     end
     
     def build_connect
-      require 'rest-client'
-      @connection = RestClient::Resource.new "https://#{@host}/xmlIM", :verify_ssl => false
+      @connection = RestClient::Resource.new "https://#{@host}/xmlIM", :verify_ssl => @insecure
     end
   end
 end

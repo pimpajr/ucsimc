@@ -36,7 +36,6 @@ class Ucsimc::TrivialXml
                                                                                @host,
                                                                                resp_doc.root.attribute("errorCode").value,
                                                                                resp_doc.root.attribute("errorDescr").value]
-      #@cookie = resp_doc.root.attribute("outCookie").value
     else
       resp_doc
     end

@@ -1,4 +1,5 @@
 require 'ucsimc/aaa'
+require 'ucsimc/config_resolve_class'
 require 'ucsimc/config_resolve_classes'
 require 'ucsimc/config_resolve_children'
 require 'ucsimc/config_resolve_dn'
@@ -7,7 +8,7 @@ require 'rest-client'
 
 module Ucsimc
   class Connection
-    attr_accessor :user, :host, :aaa, :classes, :action, :action_properties
+    attr_accessor :user, :host, :aaa, :classes, :action, :action_properties, :resp
     attr_reader :connection, :cookie
         
     def initialize opts
@@ -62,10 +63,18 @@ module Ucsimc
     end
     
     def resolve_children
-      classid = "vnicLanConnPolicy"
-      indn = "org-root"
+      classid = "fabricVlan"
+      indn = "domaingroup-root/domaingroup-YCCD/domaingroup-Modesto/fabric/lan"
       test = Ucsimc::ConfigResolveChildren.new @cookie
       @req = test.request classid, indn
+      do_post
+      @resp = test.response @resp
+    end
+    
+    def resolve_dn
+      dn = "sys"
+      test = Ucsimc::ConfigResolveDn.new @cookie
+      @req = test.request dn
       do_post
       @resp = test.response @resp
     end

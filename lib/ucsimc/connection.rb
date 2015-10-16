@@ -54,6 +54,8 @@ module Ucsimc
       @classes = ["equipmentChassis", "computePhysical"]
       test = Ucsimc::ConfigResolveClasses.new
       @req = test.request @cookie, @classes
+      do_post
+      @resp = test.response @resp
     end
   end
 end

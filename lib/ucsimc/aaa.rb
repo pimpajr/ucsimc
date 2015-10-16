@@ -4,39 +4,44 @@ module Ucsimc
   class Aaa < TrivialXml
     attr_accessor :aaa_req
     
+    def initialize
+      opts = {}
+      super opts
+    end
     
-    def aaalogin
+    
+    def aaalogin user, pass
       @action = 'aaaLogin'
-      @action_properties = {:inName => @user, :inPassword => @pass}
-      @req = easy_xml
+      @action_properties = {:inName => user, :inPassword => pass}
+      easy_xml
     end
     
-    def aaalogin_response
-      res = easy_response
-      @cookie = res.root.attribute("outCookie").value
+    def aaalogin_response resp
+      res = easy_response resp
+      res.root.attribute("outCookie").value
     end
     
-    def aaalogout
+    def aaalogout cookie
       @action = 'aaaLogout'
-      @action_properties = {:inCookie => @cookie}
-      @req = easy_xml
+      @action_properties = {:inCookie => cookie}
+      easy_xml
     end
     
-    def aaalogout_response
-      res = easy_response
+    def aaalogout_response resp
+      res = easy_response resp
       puts "Disconnection %s" % res.root.attribute("outStatus").value
       exit
     end
     
-    def aaarefresh
+    def aaarefresh user, pass, cookie
       @action = 'aaaRefresh'
-      @action_properties = {:inName => @user, :inPassword => @pass, :inCookie => @cookie}
-      @req = easy_xml
+      @action_properties = {:inName => user, :inPassword => pass, :inCookie => cookie}
+      easy_xml
     end
     
-    def aaarefresh_response
-      res = easy_response
-      @cookie = res.root.attribute("outCookie").value
+    def aaarefresh_response resp
+      res = easy_response resp
+      res.root.attribute("outCookie").value
     end
     
     

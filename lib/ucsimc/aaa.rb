@@ -4,13 +4,6 @@ module Ucsimc
   class Aaa < TrivialXml
     attr_accessor :aaa_req
     
-    def initialize
-      #@user = opts[:user]
-      #@pass = opts[:pass]
-      #@cookie ||= opts[:cookie]
-      #@token ||= opts[:token]
-      #super opts
-    end
     
     def aaalogin
       @action = 'aaaLogin'

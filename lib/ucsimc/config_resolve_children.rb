@@ -1,23 +1,22 @@
 require 'ucsimc/trivial_xml'
 
 module Ucsimc
-  class ConfigResolveClasses < TrivialXml
+  class ConfigResolveChildren < TrivialXml
     attr_accessor :action, :action_property, :inner_content, :req, :classes
     attr_reader :cookie
     
     def initialize cookie
       @cookie = cookie
       xml_opts = {
-        :inner => "inIds",
-        :inner_id => "Id",
+        :inner => "inFilter",
       }
       super xml_opts
     end
     
-    def request classes
-      @action = "configResolveClasses"
-      @action_properties = {:cookie => @cookie, :inHierarchical => "false" }
-      @inner_opt = classes
+    def request classid, indn
+      @action = "configResolveChildren"
+      @action_properties = {:cookie => @cookie, :classId => classid, :inDn => indn, :inHierarchical => "false" }
+      #@inner_opt = classes
       easy_xml
     end
     

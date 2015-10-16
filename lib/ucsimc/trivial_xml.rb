@@ -30,8 +30,10 @@ module Ucsimc
               
             when Hash
               inner.send(@inner) do |deeper|
-                deeper.send(@inner_id, @inner_opts)
+                deeper.send(@inner_id, @inner_opt)
               end
+            when nil
+              inner.send(@inner)
             else
               raise "One of these is missing:\ninner: %s\ninner_id:  %s\ninner_opts: %s\n" % [@inner, @inner_id, @inner_opts]
             end

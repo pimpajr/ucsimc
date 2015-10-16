@@ -1,5 +1,6 @@
 require 'ucsimc/aaa'
 require 'ucsimc/config_resolve_classes'
+require 'ucsimc/config_resolve_children'
 require 'rest-client'
 
 module Ucsimc
@@ -52,10 +53,20 @@ module Ucsimc
     
     def resolve_classes
       @classes = ["equipmentChassis", "computePhysical"]
-      test = Ucsimc::ConfigResolveClasses.new
-      @req = test.request @cookie, @classes
+      test = Ucsimc::ConfigResolveClasses.new @cookie
+      @req = test.request @classes
       do_post
       @resp = test.response @resp
     end
+    
+    def resolve_children
+      classid = "vnicLanConnPolicy"
+      indn = "org-root"
+      test = Ucsimc::ConfigResolveChildren.new @cookie
+      @req = test.request classid, indn
+      do_post
+      @resp = test.response @resp
+    end
+    
   end
 end

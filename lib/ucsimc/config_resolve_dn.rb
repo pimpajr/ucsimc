@@ -1,4 +1,5 @@
 require 'ucsimc/trivial_xml'
+require 'ucsimc/managed_object'
 
 module Ucsimc
   class ConfigResolveDn < TrivialXml
@@ -19,7 +20,8 @@ module Ucsimc
     end
     
     def response resp
-      easy_response resp
+      mo = Ucsimc::ManagedObject.new(easy_response(resp))
+      mo
     end
     
   end

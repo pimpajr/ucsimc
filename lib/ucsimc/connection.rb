@@ -9,7 +9,7 @@ require 'rest-client'
 module Ucsimc
   class Connection
     attr_accessor :user, :host, :aaa, :classes, :action, :action_properties, :resp
-    attr_reader :connection, :cookie
+    attr_reader :connection, :cookie, :managed_object
         
     def initialize opts
       @user = opts[:user]

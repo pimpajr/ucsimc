@@ -28,5 +28,18 @@ class Ucsimc::TrivialXml
     end
     xml.doc.root.to_xml
   end
+  
+  def easy_response
+    resp_doc = Nokogiri::XML @resp
+    if resp_doc.root.attribute "errorCode"
+      abort "There was a problem with %s. %s is reporting Error Code:%d %s" % [@action,
+                                                                               @host,
+                                                                               resp_doc.root.attribute("errorCode").value,
+                                                                               resp_doc.root.attribute("errorDescr").value]
+      #@cookie = resp_doc.root.attribute("outCookie").value
+    else
+      resp_doc
+    end
+  end
     
 end

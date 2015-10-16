@@ -12,73 +12,32 @@ module Ucsimc
       @host = opts[:host]
       #@action = "login"
       #@aaa_req = login
-      login
+      #aaalogin
       build_connect
-      get_cookie
+      login
     end
     
+    def login
+      aaalogin
+      @resp = @connection.post @req
+      aaalogin_response
+    end
     
-        
-    def get_cookie
-      resp = @connection['xmlIM'].post @req
-      resp_doc = Nokogiri::XML resp
-      if resp_doc.root.attribute "outCookie"
-        @cookie = resp_doc.root.attribute("outCookie").value
-      else
-        abort "There was a problem authenticating. %s is reporting Error Code:%d %s" % [@host,
-                                                                          resp_doc.root.attribute("errorCode").value,
-                                                                          resp_doc.root.attribute("errorDescr").value]
-      end
+    def refresh
+      aaarefresh
+      @resp = @connection.post @req
+      aaarefresh_response
+    end
+    
+    def logout
+      aaalogout
+      @resp = @connection.post @req
+      aaalogout_response
     end
     
     def build_connect
       require 'rest-client'
-      @connection = RestClient::Resource.new "https://#{@host}", :verify_ssl => false
+      @connection = RestClient::Resource.new "https://#{@host}/xmlIM", :verify_ssl => false
     end
-        
-    def create_aaa
-      require 'nokogiri'
-      doc = Nokogiri::XML::Document.new
-      case @action
-      when /login/
-        @aaa = doc.create_element "aaaLogin", :inName => @user, :inPassword => @pass
-      when /refresh/
-        @aaa = doc.create_element "aaaRefresh", :inName => @user, :inPassword => @pass, :inCookie => @cookie
-      when /logout/
-        @aaa = doc.create_element "aaaLogout", :inCookie => @cookie
-      end
-       
-    end
-    
-    def refresh
-      @action = "refresh"
-      create_aaa
-      resp = @connection['xmlIM'].post @aaa.to_xml
-      resp_doc = Nokogiri::XML(resp)
-      if resp_doc.root.attribute "outCookie"
-        @cookie = resp_doc.root.attribute("outCookie").value
-      else
-        abort "There was a problem authenticating. %s is reporting Error Code:%d %s" % [@host,
-                                                                                resp_doc.root.attribute("errorCode").value,
-                                                                                resp_doc.root.attribute("errorDescr").value]
-      end
-    end
-    
-    def logout
-      @action = "logout"
-      create_aaa
-      resp = @connection['xmlIM'].post @aaa.to_xml
-      resp_doc = Nokogiri::XML(resp)
-      if resp_doc.root.attribute("outStatus")
-        puts "Disconnection %s" % resp_doc.root.attribute("outStatus").value
-        exit
-      else
-        abort "%s is reporting Error Code:%d %s" % [@host,
-                                                    resp_doc.root.attribute("errorCode").value,
-                                                    resp_doc.root.attribute("errorDescr").value]
-      end
-      
-    end
-    
   end
 end

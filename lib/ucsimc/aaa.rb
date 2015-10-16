@@ -12,22 +12,38 @@ module Ucsimc
       #super opts
     end
     
-    def login
+    def aaalogin
       @action = 'aaaLogin'
       @action_properties = {:inName => @user, :inPassword => @pass}
       @req = easy_xml
     end
     
-    def logout
-      @action = 'aaaLogout'
-      @action_properties = {:inCookie => @cookie}
-      @req = easy_xml.doc.root.to_xml
+    def aaalogin_response
+      res = easy_response
+      @cookie = res.root.attribute("outCookie").value
     end
     
-    def refresh
+    def aaalogout
+      @action = 'aaaLogout'
+      @action_properties = {:inCookie => @cookie}
+      @req = easy_xml
+    end
+    
+    def aaalogout_response
+      res = easy_response
+      puts "Disconnection %s" % res.root.attribute("outStatus").value
+      exit
+    end
+    
+    def aaarefresh
       @action = 'aaaRefresh'
       @action_properties = {:inName => @user, :inPassword => @pass, :inCookie => @cookie}
-      @req = easy_xml.doc.root.to_xml
+      @req = easy_xml
+    end
+    
+    def aaarefresh_response
+      res = easy_response
+      @cookie = res.root.attribute("outCookie").value
     end
     
     

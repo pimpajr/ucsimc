@@ -15,8 +15,8 @@ module Ucsimc
     
     def request cookie, classes
       @action = "configResolveClasses"
-      @action_properties = {:cookie => cookie, :inHierarchical => @inHierarchical }
-      @inner_content = classes
+      @action_properties = {:cookie => cookie, :inHierarchical => "false" }
+      @inner_opt = classes
       easy_xml
     end
     

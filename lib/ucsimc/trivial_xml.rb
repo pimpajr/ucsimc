@@ -16,13 +16,19 @@ module Ucsimc
       xml = Nokogiri::XML::Builder.new do |xml|
         xml.send(@action, @action_properties) do |inner|
           if @inner
-            if @inner_id && @inner_content #&& !@inner_opts
+            case @inner_opt
+            when Array
               inner.send(@inner) do |deeper|
-                @inner_content.each do |inner_con|
-                  deeper.send(@inner_id, "value=\"#{inner_con}\"", {})
+                @inner_opt.each do |value|
+                  deeper.send(@inner_id, :value => value)
                 end
               end
-            elsif @inner_id && @inner_opts #&& !@inner_content
+              
+                #@inner_opt.each do |inner_opt|
+                #  deeper.send(@inner_id, "value=\"#{inner_opt}\"", {})
+                #end
+              
+            when Hash
               inner.send(@inner) do |deeper|
                 deeper.send(@inner_id, @inner_opts)
               end

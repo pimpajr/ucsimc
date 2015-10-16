@@ -1,6 +1,8 @@
 require 'ucsimc/aaa'
 require 'ucsimc/config_resolve_classes'
 require 'ucsimc/config_resolve_children'
+require 'ucsimc/config_resolve_dn'
+require 'ucsimc/config_resolve_parent'
 require 'rest-client'
 
 module Ucsimc

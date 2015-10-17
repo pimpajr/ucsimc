@@ -3,12 +3,14 @@ require 'ucsimc'
 
 module Ucsimc
   class ManagedObject
+    attr_accessor :mo
 
 
     
     def initialize xml_doc
       
-      @managed_object = parse_doc xml_doc
+      @mo = parse_doc xml_doc
+
       
     end
     

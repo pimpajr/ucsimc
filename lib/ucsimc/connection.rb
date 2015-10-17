@@ -68,7 +68,15 @@ module Ucsimc
       test = Ucsimc::ConfigResolveChildren.new @cookie
       @req = test.request classid, indn
       do_post
-      @resp = test.response @resp
+      obj = test.response @resp
+      set_attributes obj, classid
+    end
+    
+    def set_attributes object, attribute
+      instance_variable_set("@" + attribute, object.mo)
+      instance_variable_get("@" + attribute)
+      self.class.send(:attr_accessor, attribute.to_sym)
+      @resp = nil
     end
     
     def resolve_dn

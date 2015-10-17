@@ -54,6 +54,13 @@ module Ucsimc
       @resp = @rest.post @req
     end
     
+    def set_attributes object, attribute
+      instance_variable_set("@" + attribute, object.mo)
+      instance_variable_get("@" + attribute)
+      self.class.send(:attr_accessor, attribute.to_sym)
+      @resp = nil
+    end
+    
     def resolve_classes
       @classes = ["equipmentChassis", "computePhysical"]
       test = Ucsimc::ConfigResolveClasses.new @cookie
@@ -72,19 +79,13 @@ module Ucsimc
       set_attributes obj, classid
     end
     
-    def set_attributes object, attribute
-      instance_variable_set("@" + attribute, object.mo)
-      instance_variable_get("@" + attribute)
-      self.class.send(:attr_accessor, attribute.to_sym)
-      @resp = nil
-    end
-    
     def resolve_dn
       dn = "sys"
       test = Ucsimc::ConfigResolveDn.new @cookie
       @req = test.request dn
       do_post
-      @resp = test.response @resp
+      obj = test.response @resp
+      set_attributes obj, dn
     end
     
   end

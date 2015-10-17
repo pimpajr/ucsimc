@@ -6,11 +6,59 @@ low level queries against UCS Central. IMC implements additional logic on top of
 the API methods allowing the extension of the base API methods into more useful
 tools.
 
+After establishing a valid connection Ucsimc will allow the following methods:
+1. resolve_class
+2. resolve_children
+3. resolve_dn
+4. config_mo
+
+## resolve_class
+Takes @in_class as a string.
+Outputs to @out_dn
+
+## resolve_children
+Takes @in_class and @in_dn. Resolves the @in_class children of @in_dn.
+Outputs to @out_dn
+
+## resolve_dn
+Takes @in_dn and outputs @out_dn
+
+## config_mo
+Currently doesn't do_post, just builds the xml and outputs it.
+Still in testing with this. xml output is correct still need to test
+how UCS central handles it. Right now it's parsing @fabricVlans which
+would be a hash of dn => {values}. The dn gets set as the dn in the top
+level of the xml sent to the api while {value} gets passed to the inner 
+part of the xml doc that sets the options. The class to configure specification
+is still set statically and needs to be moved to allow it to be set externally.
+
+Example output:
+```
+<configConfMo
+    dn=""  
+    cookie="<real_cookie>" 
+    inHierarchical="false">
+    <inConfig>
+       <aaaLdapEp
+          attribute="CiscoAvPair"
+          basedn="dc=pasadena,dc=cisco,dc=com"   
+          descr=""
+          dn="sys/ldap-ext"
+          filter="sAMAccountName=$userid"
+          retries="1"   
+          status="modified"
+          timeout="30"/>
+    </inConfig>
+</configConfMo>
+```
+
 Notes: This is a really early build. Basic querying of the api functionality
 is implemented. Further validation and error handling need to be done still.
 You'll need to know the dn or class you're wanting to query. Configuration support
 is implemented. Again you'll need to know the dn and class and provide a hash for configuration.
-Will work well with yaml file configuration as a source (not implemented).
+Will work well with yaml file configuration as a source (not implemented). 
+
+Verify_ssl is currently broken, it doesn't verify right now. 
 
 ## Installation
 
@@ -32,7 +80,7 @@ Or install it yourself as:
 
 
 ### Pry instructions for now
-These can be run without building if you have the nokogiri gem installed already. 
+These can be run without building if you have the nokogiri and rest-client gems installed already. 
 Change the @LOAD_Path value replacing <your path here> if you want to clone and test
 without building.
 

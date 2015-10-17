@@ -18,16 +18,12 @@ module Ucsimc
           if @inner
             case @inner_opt
             when Array
+              fail unless @inner_id.is_a? String
               inner.send(@inner) do |deeper|
                 @inner_opt.each do |value|
                   deeper.send(@inner_id, :value => value)
                 end
-              end
-              
-                #@inner_opt.each do |inner_opt|
-                #  deeper.send(@inner_id, "value=\"#{inner_opt}\"", {})
-                #end
-              
+              end              
             when Hash
               inner.send(@inner) do |deeper|
                 deeper.send(@inner_id, @inner_opt)

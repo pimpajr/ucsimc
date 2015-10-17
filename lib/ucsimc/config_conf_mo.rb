@@ -9,15 +9,16 @@ module Ucsimc
     def initialize cookie
       @cookie = cookie
       xml_opts = {
-        :inner => "outConfig",
+        :inner => "inConfig",
       }
       super xml_opts
     end
     
-    def request classid
+    def request dn, mo_class, class_opts
       @action = "configConfMo"
-      @action_properties = {:cookie => @cookie, :classId => classid, :inHierarchical => "false" }
-      #@inner_opt = classes
+      @action_properties = {:cookie => @cookie, :dn => dn, :inHierarchical => "false" }
+      @inner_id = mo_class
+      @inner_opt = class_opts
       easy_xml
     end
     

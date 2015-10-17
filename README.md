@@ -7,10 +7,10 @@ the API methods allowing the extension of the base API methods into more useful
 tools.
 
 After establishing a valid connection Ucsimc will allow the following methods:
-1. resolve_class
-2. resolve_children
-3. resolve_dn
-4. config_mo
+ - resolve_class
+ - resolve_children
+ - resolve_dn
+ - config_mo
 
 ## resolve_class
 Takes @in_class as a string.
@@ -55,7 +55,7 @@ Example output:
 Notes: This is a really early build. Basic querying of the api functionality
 is implemented. Further validation and error handling need to be done still.
 You'll need to know the dn or class you're wanting to query. Configuration support
-is implemented. Again you'll need to know the dn and class and provide a hash for configuration.
+is in the works. Again you'll need to know the dn and class and provide a hash for configuration.
 Will work well with yaml file configuration as a source (not implemented). 
 
 Verify_ssl is currently broken, it doesn't verify right now. 

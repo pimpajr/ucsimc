@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/existsec/ucsimc.svg?branch=master)](https://travis-ci.org/existsec/ucsimc)
+[![Build Status](https://travis-ci.org/pimpajr/ucsimc.svg?branch=master)](https://travis-ci.org/pimpajr/ucsimc)
 # Ucsimc
 Ucsimc implements the Cisco XML API for Cisco UCS Central in Ruby. It wraps the Cisco XML
 API methods into easy to use ruby methods with the necessary parameters to handle

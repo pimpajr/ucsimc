@@ -24,10 +24,7 @@ Outputs to @out_dn
 Takes @in_dn and outputs @out_dn
 
 ## config_mo
-Currently doesn't do_post, just builds the xml and outputs it.
-Still in testing with this. xml output is correct still need to test
-how UCS central handles it. Right now it's parsing @fabricVlans which
-would be a hash of dn => {values}. The dn gets set as the dn in the top
+Takes @in_dn as a hash of dn => {values}. The dn gets set as the dn in the top
 level of the xml sent to the api while {value} gets passed to the inner 
 part of the xml doc that sets the options. The class to configure specification
 is still set statically and needs to be moved to allow it to be set externally.
@@ -55,8 +52,16 @@ Example output:
 Notes: This is a really early build. Basic querying of the api functionality
 is implemented. Further validation and error handling need to be done still.
 You'll need to know the dn or class you're wanting to query. Configuration support
-is in the works. Again you'll need to know the dn and class and provide a hash for configuration.
-Will work well with yaml file configuration as a source (not implemented). 
+is implemented and working. Again you'll need to know the dn and class and provide
+a hash for configuration. Will work well with yaml file configuration as a source
+(not implemented).
+
+Connection now handles requests/responses more sanely which allows watching for 
+error codes/descriptions and reacting to them. First example of this is if a
+request gets an auth failed response indication session is no longer authenticated.
+This means the session has expired and can be refreshed. If do_post_extended
+sees this error message it'll refresh the session and rerun the request, post, and
+response, returning the managed_object hash.
 
 Verify_ssl is currently broken, it doesn't verify right now. 
 

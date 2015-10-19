@@ -38,8 +38,6 @@ module Ucsimc
       resp_doc = Nokogiri::XML resp
       if resp_doc.root.attribute "errorCode"
         error_hash = { :error => {resp_doc.root.attribute("errorCode").value => resp_doc.root.attribute("errorDescr").value}}
-        #abort "There was a problem with the request. The API is reporting Error Code: %d %s" % [resp_doc.root.attribute("errorCode").value,
-        #                                                                                        resp_doc.root.attribute("errorDescr").value]
         error_hash
       else
         resp_doc

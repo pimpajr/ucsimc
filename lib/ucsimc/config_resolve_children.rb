@@ -6,18 +6,20 @@ module Ucsimc
     attr_accessor :action, :action_property, :inner_content, :req, :classes
     attr_reader :cookie
     
-    def initialize cookie
-      @cookie = cookie
+    def initialize
       xml_opts = {
         :inner => "inFilter",
       }
       super xml_opts
     end
     
-    def request classid, indn
+    def request cookie, opts
+      fail unless cookie.is_a? String
+      fail unless opts.is_a? Hash
+      fail unless opts[:in_class].is_a? String
+      fail unless opts[:in_dn].is_a? String
       @action = "configResolveChildren"
-      @action_properties = {:cookie => @cookie, :classId => classid, :inDn => indn, :inHierarchical => "false" }
-      #@inner_opt = classes
+      @action_properties = {:cookie => cookie, :classId => opts[:in_class], :inDn => opts[:in_dn], :inHierarchical => "false" }
       easy_xml
     end
     

@@ -13,6 +13,7 @@ module Ucsimc
     attr_reader :connection, :cookie, :out_dn, :resp
         
     def initialize opts
+      fail unless opts.is_a? Hash
       @user = opts[:user]
       @pass = opts[:pass]
       @host = opts[:host]
@@ -30,21 +31,24 @@ module Ucsimc
       aaa = aaa_auth
       @req = aaa.aaalogin @user, @pass
       do_post
-      @cookie = aaa.aaalogin_response @resp
+      result = aaa.aaalogin_response @resp
+      parse_aaa result, "login"
     end
     
     def refresh
       aaa = aaa_auth
       @req = aaa.aaarefresh @user, @pass, @cookie
       do_post
-      @cookie = aaa.aaarefresh_response @resp
+      result = aaa.aaarefresh_response @resp
+      parse_aaa result, "refresh"
     end
     
     def logout
       aaa = aaa_auth
       @req = aaa.aaalogout @cookie
       do_post
-      aaa.aaalogout_response @resp
+      result = aaa.aaalogout_response @resp
+      parse_aaa result, "logout"
     end
     
     def build_connect
@@ -55,62 +59,117 @@ module Ucsimc
       @resp = @rest.post @req
     end
     
-    def set_attributes object, attribute
-      instance_variable_set("@" + attribute, object.mo)
-      instance_variable_get("@" + attribute)
-      self.class.send(:attr_accessor, attribute.to_sym)
-      @resp = nil
+    def do_post_extended api_method, opts
+      req = api_method.request @cookie, opts
+      resp = @rest.post req
+      mo = api_method.response resp
+      until mo.mo[:error].nil?
+        mo.each { |error,number|
+          number.each { |erno,erdesc|
+            case erno
+            when /547/
+              
+              # Checking for Session state in index 1
+              # raise error if it's not an expired
+              # session, if expired refresh and redo
+              # request
+              
+              auth_fail = erdesc.split(":")
+              if auth_fail[1]
+                case auth_fail[1]
+                when /Session not authenticated/
+                  refresh
+                  req = api_method.request @cookie, opts
+                  resp = @rest.post req
+                  mo = api_method.response resp
+                else
+                  raise "%s %s"  % [erno, erdesc]
+                end
+                
+              else
+                raise "%s %s"  % [erno, erdesc]
+              end
+            else
+              raise "%s %s"  % [erno, erdesc]
+            end
+          }
+        }
+      end
+      @out_dn = mo.mo
+    end
+    
+    def parse_aaa result, step
+      case result
+      when Hash
+        if result[:error]
+          result.each { |error,number|
+            number.each { |erno,erdesc|
+              puts "\# %s failed \# Error code: %d Description: %s" % [step,erno,erdesc]
+            }
+          }
+          exit
+        end   
+      else
+        case step
+        when /login/
+          @cookie = result
+        when /logout/
+          puts "Logout %s" % result
+          exit
+        when /refresh/
+          @cookie = result
+        end
+      end
     end
     
     def resolve_class
-      #@classid = "fabricVlan"
       case @in_class
       when Hash
-        r_class = Ucsimc::ConfigResolveClasses.new @cookie
-        @req = r_class.request @in_class.keys
-      else
-        r_class = Ucsimc::ConfigResolveClass.new @cookie
-        @req = r_class.request @in_class
+        opts = {:in_class => @in_class.keys}
+        r_class = Ucsimc::ConfigResolveClasses.new
+      when String
+        opts = {:in_class => @in_class}
+        r_class = Ucsimc::ConfigResolveClass.new
+      when Array
+        opts = {:in_class => @in_class}
+        r_class = Ucsimc::ConfigResolveClasses.new
+      else 
+        raise "in_class needs to be Hash, String, or Array got %s instead" % @in_class.class
       end
-      do_post
-      obj = r_class.response @resp
-      @out_dn = obj.mo
-      
+      do_post_extended r_class, opts
     end 
     
-    def resolve_classes
-      fail unless @in_class.is_a? Array
-      test = Ucsimc::ConfigResolveClasses.new @cookie
-      @req = test.request @in_class
-      do_post
-      obj = test.response @resp
-      @out_dn = obj.mo
-    end
-    
     def resolve_children
-      test = Ucsimc::ConfigResolveChildren.new @cookie
-      @req = test.request @in_class, @in_dn
-      do_post
-      obj = test.response @resp
-      @out_dn = obj.mo
-      #set_attributes obj, @classid
+      fail unless @in_class.is_a? String
+      fail unless @in_dn.is_a? String
+      opts = {:in_class => @in_class,
+              :in_dn => @in_dn
+      }
+      test = Ucsimc::ConfigResolveChildren.new
+      do_post_extended test, opts
     end
     
     def resolve_dn
-      test = Ucsimc::ConfigResolveDn.new @cookie
-      @req = test.request @in_dn
-      do_post
-      obj = test.response @resp
-      @out_dn = obj.mo
+      fail unless @in_dn.is_a? String
+      opts = {:in_dn => @in_dn}
+      crd = Ucsimc::ConfigResolveDn.new
+      do_post_extended crd, opts
     end
     
     def config_mo
-      a = {}
-      test = Ucsimc::ConfigConfMo.new @cookie
-      @fabricVlan.each do |key,hash|
-        a[key] = test.request key, "fabricVlan", hash
-      end
-      a
+      fail unless @in_dn.is_a? Hash
+      fail unless @in_class.is_a? String
+      conf = {}
+      ccm = Ucsimc::ConfigConfMo.new
+      @in_dn.each { |dn,options|
+        opts = {:dn => dn,
+                :mo_class => @in_class,
+                :class_opts => options
+        }
+        #do_post_extended ccm, opts
+        conf[dn] = ccm.request @cookie, opts
+      }
+      conf
     end
     
   end

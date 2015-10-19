@@ -1,6 +1,5 @@
 require 'spec_helper'
 require_relative '../lib/ucsimc'
-require_relative '../lib/ucsimc/aaa'
 
 describe Ucsimc do
 
@@ -20,8 +19,27 @@ describe Ucsimc do
   end
   
   it 'has class ConfigResolveClass and method request that builds xml correctly' do
-    crc = Ucsimc::ConfigResolveClass.new "fake-cookie"
-    expect(crc.request "fabricVlan").to eq("<configResolveClass cookie=\"fake-cookie\" classId=\"fabricVlan\" inHierarchical=\"false\">\n  <inFilter/>\n</configResolveClass>")
+    cookie = "fake-cookie"
+    opts = {:in_class => "fabricVlan"}
+    crc = Ucsimc::ConfigResolveClass.new
+    expect(crc.request cookie, opts).to eq("<configResolveClass cookie=\"fake-cookie\" classId=\"fabricVlan\" inHierarchical=\"false\">\n  <inFilter/>\n</configResolveClass>")
+  end
+  
+  it 'has class ConfigConfMo and method request that builds xml correctly' do
+    
+    ccm = Ucsimc::ConfigConfMo.new
+    cookie = "fake-cookie"
+    dn = "domaingroup-root/fabric/lan/net-not-found"
+    mo_class = "fabricVlan"
+    class_opts = {"defaultNet"=>"no",
+                  "dn"=>"domaingroup-root/fabric/lan/net-not-found",
+                  "id"=>"404",
+                  "mcastPolicyName"=>"default",
+                  "name"=>"not-found",
+                  "switchId"=>"dual"}
+    opts = {:dn => dn, :mo_class => mo_class, :class_opts => class_opts}
+                  
+    expect(ccm.request cookie, opts).to eq("<configConfMo cookie=\"fake-cookie\" dn=\"domaingroup-root/fabric/lan/net-not-found\" inHierarchical=\"false\">\n  <inConfig>\n    <fabricVlan defaultNet=\"no\" dn=\"domaingroup-root/fabric/lan/net-not-found\" id=\"404\" mcastPolicyName=\"default\" name=\"not-found\" switchId=\"dual\"/>\n  </inConfig>\n</configConfMo>")
   end
 
 end

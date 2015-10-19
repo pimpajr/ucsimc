@@ -1,15 +1,11 @@
-#require 'ucsimc'
 require 'nokogiri'
 module Ucsimc
   class TrivialXml
-    #attr_accessor :action, :action_properties, :filter, :filter_operator
-    #attr_reader :xml
     
     def initialize opts
+      fail unless opts.is_a? Hash
       @inner = opts[:inner]
-      @inner_id = opts[:inner_id]
-      #@inner_opts = opts[:inner_opts]
-      
+      @inner_id = opts[:inner_id]      
     end
     
     def easy_xml
@@ -25,13 +21,12 @@ module Ucsimc
                 end
               end              
             when Hash
+              fail unless @inner_id.is_a? String
               inner.send(@inner) do |deeper|
                 deeper.send(@inner_id, @inner_opt)
               end
             when nil
               inner.send(@inner)
-            else
-              raise "One of these is missing:\ninner: %s\ninner_id:  %s\ninner_opts: %s\n" % [@inner, @inner_id, @inner_opts]
             end
           end
         end
@@ -42,10 +37,10 @@ module Ucsimc
     def easy_response resp
       resp_doc = Nokogiri::XML resp
       if resp_doc.root.attribute "errorCode"
-        abort "There was a problem with %s. %s is reporting Error Code:%d %s" % [@action,
-                                                                                 @host,
-                                                                                 resp_doc.root.attribute("errorCode").value,
-                                                                                 resp_doc.root.attribute("errorDescr").value]
+        error_hash = { :error => {resp_doc.root.attribute("errorCode").value => resp_doc.root.attribute("errorDescr").value}}
+        #abort "There was a problem with the request. The API is reporting Error Code: %d %s" % [resp_doc.root.attribute("errorCode").value,
+        #                                                                                        resp_doc.root.attribute("errorDescr").value]
+        error_hash
       else
         resp_doc
       end

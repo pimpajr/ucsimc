@@ -9,6 +9,15 @@ module Ucsimc
       super opts
     end
     
+    def parse_resp_doc resp, query
+      case resp
+      when Nokogiri::XML::Document
+        parsed = resp.root.attribute(query).value
+      when Hash
+        parsed = resp
+      end
+      parsed
+    end
     
     def aaalogin user, pass
       @action = 'aaaLogin'
@@ -17,8 +26,9 @@ module Ucsimc
     end
     
     def aaalogin_response resp
+      res_query = "outCookie"
       res = easy_response resp
-      res.root.attribute("outCookie").value
+      parse_resp_doc res, res_query
     end
     
     def aaalogout cookie
@@ -28,9 +38,11 @@ module Ucsimc
     end
     
     def aaalogout_response resp
+      res_query = "outStatus"
       res = easy_response resp
-      puts "Disconnection %s" % res.root.attribute("outStatus").value
-      exit
+      parse_resp_doc res, res_query
+      #puts "Disconnection %s" % temp
+      #exit
     end
     
     def aaarefresh user, pass, cookie
@@ -40,8 +52,10 @@ module Ucsimc
     end
     
     def aaarefresh_response resp
+      res_query = "outCookie"
       res = easy_response resp
-      res.root.attribute("outCookie").value
+      parse_resp_doc res, res_query
+      #res.root.attribute("outCookie").value
     end
     
     

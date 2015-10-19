@@ -64,7 +64,7 @@ module Ucsimc
       resp = @rest.post req
       mo = api_method.response resp
       until mo.mo[:error].nil?
-        mo.each { |error,number|
+        mo.mo.each { |error,number|
           number.each { |erno,erdesc|
             case erno
             when /547/
@@ -166,10 +166,8 @@ module Ucsimc
                 :mo_class => @in_class,
                 :class_opts => options
         }
-        #do_post_extended ccm, opts
-        conf[dn] = ccm.request @cookie, opts
+        do_post_extended ccm, opts
       }
-      conf
     end
     
   end

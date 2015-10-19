@@ -35,8 +35,7 @@ describe Ucsimc do
                   "dn"=>"domaingroup-root/fabric/lan/net-not-found",
                   "id"=>"404",
                   "mcastPolicyName"=>"default",
-                  "name"=>"not-found",
-                  "switchId"=>"dual"}
+                  "name"=>"not-found"}
     opts = {:dn => dn, :mo_class => mo_class, :class_opts => class_opts}
                   
     expect(ccm.request cookie, opts).to eq("<configConfMo cookie=\"fake-cookie\" dn=\"domaingroup-root/fabric/lan/net-not-found\" inHierarchical=\"false\">\n  <inConfig>\n    <fabricVlan defaultNet=\"no\" dn=\"domaingroup-root/fabric/lan/net-not-found\" id=\"404\" mcastPolicyName=\"default\" name=\"not-found\" switchId=\"dual\"/>\n  </inConfig>\n</configConfMo>")

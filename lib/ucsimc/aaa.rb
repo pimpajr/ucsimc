@@ -41,8 +41,6 @@ module Ucsimc
       res_query = "outStatus"
       res = easy_response resp
       parse_resp_doc res, res_query
-      #puts "Disconnection %s" % temp
-      #exit
     end
     
     def aaarefresh user, pass, cookie
@@ -55,7 +53,6 @@ module Ucsimc
       res_query = "outCookie"
       res = easy_response resp
       parse_resp_doc res, res_query
-      #res.root.attribute("outCookie").value
     end
     
     

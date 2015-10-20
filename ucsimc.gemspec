@@ -8,12 +8,11 @@ require 'ucsimc/version'
 Gem::Specification.new do |spec|
   spec.name          = "ucsimc"
   spec.version       = Ucsimc::VERSION
-  spec.authors       = ["existsec"]
+  spec.authors       = ["Patrick Pimentel Jr."]
   spec.email         = ["existsec@gmail.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{UCS Central XML API implemented in Ruby}
+  spec.homepage      = "http://pimpajr.github.io"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or

@@ -15,7 +15,7 @@ module Ucsimc
     def initialize opts
       fail unless opts.is_a? Hash
       @user = opts[:user]
-      @pass = opts[:pass]
+      @pass = opts[:password]
       @host = opts[:host]
       @inHierarchical = opts[:inHierarchical]
         

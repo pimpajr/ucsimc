@@ -114,8 +114,7 @@ module Ucsimc
         when /login/
           @cookie = result
         when /logout/
-          puts "Logout %s" % result
-          exit
+          puts "UCS Logout %s" % result
         when /refresh/
           @cookie = result
         end

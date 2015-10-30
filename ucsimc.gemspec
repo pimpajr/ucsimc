@@ -35,5 +35,3 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "thor"
   spec.add_development_dependency "rest-client"
 end
-
-446962
